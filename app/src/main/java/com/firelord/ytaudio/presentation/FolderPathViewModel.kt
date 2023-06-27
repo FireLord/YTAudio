@@ -1,4 +1,4 @@
-package com.firelord.ytaudio
+package com.firelord.ytaudio.presentation
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.Home.HomeFragment" >
+
+    <TextView
+        android:id="@+id/tvYT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:drawableLeft="@drawable/youtube"
+        android:drawablePadding="5dp"
+        android:text="MP3 Downloader"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.158"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="YouTube Link"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvYT"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvYT"
+        app:layout_constraintTop_toBottomOf="@+id/tvYT" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tfLink"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        app:startIconDrawable="@drawable/link"
+        app:endIconMode="clear_text"
+        app:endIconDrawable="@drawable/cross"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvLink"
+        app:layout_constraintTop_toBottomOf="@+id/tvLink">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tfLinkText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="https://youtu.be/ijE2MMtzkHg"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tvDestination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Destination Folder"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tfLink"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tfLink"
+        app:layout_constraintTop_toBottomOf="@+id/tfLink" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tfPath"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:startIconDrawable="@drawable/folder"
+        app:layout_constraintEnd_toEndOf="@+id/tfLink"
+        app:layout_constraintStart_toStartOf="@+id/tvDestination"
+        app:layout_constraintTop_toBottomOf="@+id/tvDestination">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ytaudio-download"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tvWhereYou"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Where you want to save the MP3"
+        app:layout_constraintEnd_toEndOf="@+id/tfPath"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tfPath"
+        app:layout_constraintTop_toBottomOf="@+id/tfPath" />
+
+    <Button
+        android:id="@+id/btDownload"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Download"
+        app:layout_constraintEnd_toEndOf="@+id/tfPath"
+        app:layout_constraintStart_toStartOf="@+id/tvWhereYou"
+        app:layout_constraintTop_toBottomOf="@+id/tvWhereYou" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
