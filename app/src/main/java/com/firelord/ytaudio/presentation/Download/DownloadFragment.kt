@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -83,6 +84,18 @@ class DownloadFragment : Fragment() {
                 getVideo(downloadLink)
             }
         }
+
+        sharedViewModel.resultPassFail.observe(viewLifecycleOwner) {resultPassFail ->
+            if (resultPassFail == 1)
+            {
+                binding.root.findNavController().navigate(R.id.action_downloadFragment_to_successFragment)
+            }
+            if(resultPassFail == 0)
+            {
+                binding.root.findNavController().navigate(R.id.action_downloadFragment_to_failFragment)
+            }
+        }
+
     }
     private fun folderPath():String{
         val youtubeBackupDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ytaudio-download")
@@ -119,7 +132,10 @@ class DownloadFragment : Fragment() {
                     sharedViewModel.progressVal.postValue(progress)
                     sharedViewModel.progressName.postValue(s)
                 }
+                sharedViewModel.resultPassFail.postValue(1) // download passed
             } catch (e: Exception) {
+                sharedViewModel.resultPassFail.postValue(0) // download failed
+                sharedViewModel.failReason.postValue(e.message.toString())
                 Log.d("DownloadException", e.message.toString())
             }
         }.start()

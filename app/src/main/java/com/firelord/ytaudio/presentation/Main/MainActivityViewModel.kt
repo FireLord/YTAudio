@@ -21,6 +21,8 @@ class MainActivityViewModel : ViewModel() {
     val videoInfoException: MutableLiveData<Exception> = MutableLiveData()
     val progressVal: MutableLiveData<Float> = MutableLiveData()
     val progressName: MutableLiveData<String> = MutableLiveData()
+    val resultPassFail: MutableLiveData<Int> = MutableLiveData()
+    val failReason: MutableLiveData<String> = MutableLiveData()
 
 
     fun getVideoInfo(url: String) {
