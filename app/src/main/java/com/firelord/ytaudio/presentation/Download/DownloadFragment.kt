@@ -123,7 +123,7 @@ class DownloadFragment : Fragment() {
                 request.addOption("--add-metadata")
                 request.addOption("--embed-thumbnail")
                 request.addOption("--compat-options", "embed-thumbnail-atomicparsley")
-                request.addOption("--force-overwrites")
+                request.addOption("--restrict-filenames")
                 YoutubeDL.getInstance().execute(request)
                 { progress: Float, v: Long, s: String ->
                     Log.d(App.TAG, s)

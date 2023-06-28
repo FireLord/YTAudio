@@ -91,11 +91,15 @@ class HomeFragment : Fragment() {
     private fun getVideoInfo(url: String){
         binding.btDownload.text = "Grabbing info"
         binding.progressBar2.visibility = View.VISIBLE
+        binding.tfPath.isEnabled = false
+        binding.tfLink.isEnabled = false
         sharedViewModel.getVideoInfo(url)
     }
     private fun handleFetchVideoInfoFailure(exception: Exception?) {
         binding.btDownload.text = "Download"
         binding.progressBar2.visibility = View.GONE
+        binding.tfPath.isEnabled = true
+        binding.tfLink.isEnabled = true
         Log.d("Error",exception?.message.toString())
     }
 

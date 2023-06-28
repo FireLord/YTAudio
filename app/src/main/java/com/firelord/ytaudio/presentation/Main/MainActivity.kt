@@ -18,4 +18,8 @@ class MainActivity : AppCompatActivity() {
 
         folderPathViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
     }
+    override fun onBackPressed() {
+        finish()
+        super.onBackPressed()
+    }
 }
