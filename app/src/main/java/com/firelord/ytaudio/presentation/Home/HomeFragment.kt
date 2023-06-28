@@ -24,12 +24,15 @@ import com.firelord.ytaudio.presentation.App.Companion.TAG
 import com.firelord.ytaudio.presentation.Main.MainActivityViewModel
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
+import com.yausername.youtubedl_android.mapper.VideoInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.lang.Exception
 import kotlin.math.log
 
 class HomeFragment : Fragment() {
@@ -39,24 +42,32 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.btDownload.text = "Download"
 
         // start download
-        sharedViewModel.downloadButton.value = "Download"
-        sharedViewModel.downloadButton.observe(viewLifecycleOwner) {
-            binding.btDownload.text = it
+        sharedViewModel.videoInfoLiveData.observe(viewLifecycleOwner) {
+            handleFetchVideoInfoSuccess(it)
         }
+
+        sharedViewModel.videoInfoException.observe(viewLifecycleOwner) {
+            handleFetchVideoInfoFailure(it)
+        }
+
         binding.btDownload.setOnClickListener { buttonIt ->
             var url = binding.tfLink.editText?.text.toString()
             if (url == "") {
                 url = "https://youtu.be/ijE2MMtzkHg";
             }
 
-            getVideo(url)
-            buttonIt.findNavController().navigate(R.id.action_homeFragment_to_downloadFragment)
-            sharedViewModel.downloadLink.value = url
+            getVideoInfo(url)
         }
         binding.tfPath.setStartIconOnClickListener {
             openFolderSelection()
@@ -64,23 +75,32 @@ class HomeFragment : Fragment() {
                 binding.tfPath.editText?.setText(folderPath)
             }
         }
+    }
+    private fun handleFetchVideoInfoSuccess(videoInfo: VideoInfo?) {
+        binding.progressBar2.visibility = View.GONE
+        videoInfo?.let {
+            sharedViewModel.title.value = videoInfo.title
+            sharedViewModel.thumbnail.value = videoInfo.thumbnail
+            sharedViewModel.viewsCount.value = videoInfo.viewCount
+            sharedViewModel.likesCount.value = videoInfo.likeCount
 
-        return binding.root
+            proceedToDownloadScreen(it.url)
+        }
+    }
+    private fun getVideoInfo(url: String){
+        binding.btDownload.text = "Grabbing info"
+        binding.progressBar2.visibility = View.VISIBLE
+        sharedViewModel.getVideoInfo(url)
+    }
+    private fun handleFetchVideoInfoFailure(exception: Exception?) {
+        binding.btDownload.text = "Download"
+        binding.progressBar2.visibility = View.GONE
+        Log.d("Error",exception?.message.toString())
     }
 
-      fun getVideo(url: String){
-            try {
-                sharedViewModel.downloadButton.postValue("Grabbing info")
-                val videoInfo = YoutubeDL.getInstance().getInfo(url)
-                sharedViewModel.title.value = videoInfo.title
-                sharedViewModel.thumbnail.value = videoInfo.thumbnail
-                sharedViewModel.viewsCount.value = videoInfo.viewCount
-                sharedViewModel.likesCount.value = videoInfo.likeCount
-            } catch (e: Exception)
-            {
-                sharedViewModel.downloadButton.postValue("Download")
-                Log.d("Error",e.message.toString())
-            }
+    private fun proceedToDownloadScreen(url: String?) {
+        binding.root.findNavController().navigate(R.id.action_homeFragment_to_downloadFragment)
+        sharedViewModel.downloadLink.value = url ?: binding.tfLink.editText?.text.toString()
     }
 
     private fun openFolderSelection() {

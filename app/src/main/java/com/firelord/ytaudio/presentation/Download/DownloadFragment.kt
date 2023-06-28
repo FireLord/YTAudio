@@ -3,6 +3,8 @@ package com.firelord.ytaudio.presentation.Download
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
+import android.os.Looper
+import android.telephony.PhoneNumberUtils.formatNumber
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -20,7 +23,9 @@ import com.firelord.ytaudio.presentation.App
 import com.firelord.ytaudio.presentation.Main.MainActivityViewModel
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -30,9 +35,14 @@ class DownloadFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         sharedViewModel.viewsCount.observe(viewLifecycleOwner){ viewCount ->
             binding.tvViews.text = formatNumber(viewCount.toLong())
@@ -53,17 +63,15 @@ class DownloadFragment : Fragment() {
         }
 
         sharedViewModel.likesCount.observe(viewLifecycleOwner){ likesCount ->
-           binding.tvLikes.text = formatNumber(likesCount.toLong())
+            binding.tvLikes.text = formatNumber(likesCount.toLong())
         }
 
         sharedViewModel.downloadLink.observe(viewLifecycleOwner){ downloadLink ->
-            //getVideo(downloadLink)
+            lifecycleScope.launch ( Dispatchers.IO ) {
+                getVideo(downloadLink)
+            }
         }
-
-        return binding.root
     }
-
-
     private fun folderPath():String{
         val youtubeBackupDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ytaudio-download")
         var youtubeDLDir = ""
@@ -79,21 +87,29 @@ class DownloadFragment : Fragment() {
         return youtubeDLDir
     }
     private fun getVideo(url: String) {
-        val request = YoutubeDLRequest(url)
-        request.addOption("-o", folderPath() + "/%(title)s.%(ext)s")
-        request.addOption("-x")
-        request.addOption("--audio-format", "mp3")
-        request.addOption("--audio-quality", "0")
-        request.addOption("--add-metadata")
-        request.addOption("--embed-thumbnail")
-        request.addOption("--compat-options", "embed-thumbnail-atomicparsley")
-        request.addOption("--force-overwrites")
-        YoutubeDL.getInstance().execute(request)
-        { progress: Float, v: Long, s: String ->
-            Log.d(App.TAG, s)
-            Log.d(App.TAG, v.toString())
-            Log.d(App.TAG, progress.toString())
-        }
+        Thread {
+            Looper.prepare()
+            try {
+                val request = YoutubeDLRequest(url)
+                request.addOption("-o", folderPath() + "/%(title)s.%(ext)s")
+                request.addOption("-x")
+                request.addOption("--audio-format", "mp3")
+                request.addOption("--audio-quality", "0")
+                request.addOption("--add-metadata")
+                request.addOption("--embed-thumbnail")
+                request.addOption("--compat-options", "embed-thumbnail-atomicparsley")
+                request.addOption("--force-overwrites")
+                YoutubeDL.getInstance().execute(request)
+                { progress: Float, v: Long, s: String ->
+                    Log.d(App.TAG, s)
+                    Log.d(App.TAG, v.toString())
+                    Log.d(App.TAG, progress.toString())
+                }
+                //Toast.makeText(activity, "download done", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Log.d("DownloadException", e.message.toString())
+            }
+        }.start()
     }
 
     fun formatNumber(num: Long): String {
