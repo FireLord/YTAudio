@@ -52,7 +52,7 @@
             android:id="@+id/tfLinkText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="https://youtu.be/ijE2MMtzkHg"/>
+            android:text="https://youtu.be/aqz-KE-bpKQ"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView

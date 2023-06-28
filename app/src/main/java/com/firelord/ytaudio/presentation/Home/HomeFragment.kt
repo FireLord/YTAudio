@@ -22,6 +22,7 @@ import com.firelord.ytaudio.databinding.FragmentHomeBinding
 import com.firelord.ytaudio.presentation.App
 import com.firelord.ytaudio.presentation.App.Companion.TAG
 import com.firelord.ytaudio.presentation.Main.MainActivityViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
 import com.yausername.youtubedl_android.mapper.VideoInfo
@@ -68,7 +69,7 @@ class HomeFragment : Fragment() {
         binding.btDownload.setOnClickListener { buttonIt ->
             var url = binding.tfLink.editText?.text.toString()
             if (url == "") {
-                url = "https://youtu.be/ijE2MMtzkHg";
+                url = "https://youtu.be/aqz-KE-bpKQ";
             }
 
             getVideoInfo(url)
@@ -100,6 +101,7 @@ class HomeFragment : Fragment() {
         binding.progressBar2.visibility = View.GONE
         binding.tfPath.isEnabled = true
         binding.tfLink.isEnabled = true
+        Snackbar.make(binding.root,"Please turn on net",Snackbar.LENGTH_SHORT).show()
         Log.d("Error",exception?.message.toString())
     }
 
