@@ -1,6 +1,8 @@
 package com.firelord.ytaudio.presentation.Download
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Environment
 import android.os.Looper
@@ -50,6 +52,16 @@ class DownloadFragment : Fragment() {
 
         sharedViewModel.title.observe(viewLifecycleOwner){ title ->
             binding.tvTitle.text = title.toString()
+        }
+
+        sharedViewModel.progressVal.observe(viewLifecycleOwner) {progressVal ->
+            binding.tvProgressData.text = "$progressVal%"
+            binding.progressBar.progress = progressVal.toInt()
+        }
+
+
+        sharedViewModel.progressName.observe(viewLifecycleOwner) {progressName ->
+            checkString(progressName)
         }
 
         sharedViewModel.thumbnail.observe(viewLifecycleOwner){ thumbnail ->
@@ -104,15 +116,16 @@ class DownloadFragment : Fragment() {
                     Log.d(App.TAG, s)
                     Log.d(App.TAG, v.toString())
                     Log.d(App.TAG, progress.toString())
+                    sharedViewModel.progressVal.postValue(progress)
+                    sharedViewModel.progressName.postValue(s)
                 }
-                //Toast.makeText(activity, "download done", Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
                 Log.d("DownloadException", e.message.toString())
             }
         }.start()
     }
 
-    fun formatNumber(num: Long): String {
+    private fun formatNumber(num: Long): String {
         val suffixes = mapOf(
             1000000000L to "B",
             1000000L to "M",
@@ -130,5 +143,31 @@ class DownloadFragment : Fragment() {
 
         // If the number is less than 1000, return it as is
         return num.toString()
+    }
+
+    private fun checkString(stringToCheck: String) {
+        var outPut = ""
+        if (stringToCheck.contains("[download]", ignoreCase = true)) {
+            outPut = "Downloading..."
+            binding.progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#3690FA"), PorterDuff.Mode.SRC_IN)
+            binding.progressBar.progressDrawable.setColorFilter(Color.parseColor("#3690FA"), PorterDuff.Mode.SRC_IN)
+        }
+
+        else if (stringToCheck.contains("[ExtractAudio]", ignoreCase = true)) {
+            outPut = "Converting..."
+            binding.progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#FFBB0E"), PorterDuff.Mode.SRC_IN)
+            binding.progressBar.progressDrawable.setColorFilter(Color.parseColor("#FFBB0E"), PorterDuff.Mode.SRC_IN)
+        }
+
+        else if (stringToCheck.contains("[EmbedThumbnail]", ignoreCase = true)) {
+            outPut = "Saving..."
+            binding.progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#28C6D0"), PorterDuff.Mode.SRC_IN)
+            binding.progressBar.progressDrawable.setColorFilter(Color.parseColor("#28C6D0"), PorterDuff.Mode.SRC_IN)
+        }
+
+        else{
+            outPut = "Starting..."
+        }
+        binding.tvDownloading.text = outPut
     }
 }

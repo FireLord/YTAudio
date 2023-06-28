@@ -19,6 +19,9 @@ class MainActivityViewModel : ViewModel() {
     val downloadButton: MutableLiveData<String> = MutableLiveData()
     val videoInfoLiveData: MutableLiveData<VideoInfo> = MutableLiveData()
     val videoInfoException: MutableLiveData<Exception> = MutableLiveData()
+    val progressVal: MutableLiveData<Float> = MutableLiveData()
+    val progressName: MutableLiveData<String> = MutableLiveData()
+
 
     fun getVideoInfo(url: String) {
         viewModelScope.launch(Dispatchers.IO) {
