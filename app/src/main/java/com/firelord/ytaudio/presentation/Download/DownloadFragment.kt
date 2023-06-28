@@ -35,7 +35,7 @@ class DownloadFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
 
         sharedViewModel.viewsCount.observe(viewLifecycleOwner){ viewCount ->
-            binding.tvViews.text = viewCount.toString()
+            binding.tvViews.text = formatNumber(viewCount.toLong())
         }
 
         sharedViewModel.title.observe(viewLifecycleOwner){ title ->
@@ -53,11 +53,11 @@ class DownloadFragment : Fragment() {
         }
 
         sharedViewModel.likesCount.observe(viewLifecycleOwner){ likesCount ->
-           binding.tvLikes.text = likesCount.toString()
+           binding.tvLikes.text = formatNumber(likesCount.toLong())
         }
 
         sharedViewModel.downloadLink.observe(viewLifecycleOwner){ downloadLink ->
-            getVideo(downloadLink)
+            //getVideo(downloadLink)
         }
 
         return binding.root
@@ -94,5 +94,25 @@ class DownloadFragment : Fragment() {
             Log.d(App.TAG, v.toString())
             Log.d(App.TAG, progress.toString())
         }
+    }
+
+    fun formatNumber(num: Long): String {
+        val suffixes = mapOf(
+            1000000000L to "B",
+            1000000L to "M",
+            1000L to "K"
+        )
+
+        for (suffix in suffixes.keys.sortedDescending()) {
+            if (Math.abs(num) >= suffix) {
+                val formattedNum = num.toDouble() / suffix
+                // Format number with 1 decimal place
+                val formattedString = "%.1f".format(formattedNum)
+                return "$formattedString${suffixes[suffix]}"
+            }
+        }
+
+        // If the number is less than 1000, return it as is
+        return num.toString()
     }
 }
