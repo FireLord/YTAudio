@@ -58,6 +58,7 @@ class SuccessFragment : Fragment() {
         binding.progressBar3.progressDrawable.setColorFilter(Color.parseColor("#72BD6C"), PorterDuff.Mode.SRC_IN)
 
         binding.btDownloadAgain.setOnClickListener {
+            sharedViewModel.cleanup()
             binding.root.findNavController().navigate(R.id.action_successFragment_to_homeFragment)
         }
     }

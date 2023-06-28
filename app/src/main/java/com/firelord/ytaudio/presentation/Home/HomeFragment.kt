@@ -61,6 +61,10 @@ class HomeFragment : Fragment() {
             handleFetchVideoInfoFailure(it)
         }
 
+        sharedViewModel.folderPathLiveData.observe(viewLifecycleOwner) { folderPath ->
+            binding.tfPath.editText?.setText(folderPath)
+        }
+
         binding.btDownload.setOnClickListener { buttonIt ->
             var url = binding.tfLink.editText?.text.toString()
             if (url == "") {
@@ -71,9 +75,6 @@ class HomeFragment : Fragment() {
         }
         binding.tfPath.setStartIconOnClickListener {
             openFolderSelection()
-            sharedViewModel.folderPathLiveData.observe(viewLifecycleOwner) { folderPath ->
-                binding.tfPath.editText?.setText(folderPath)
-            }
         }
     }
     private fun handleFetchVideoInfoSuccess(videoInfo: VideoInfo?) {
