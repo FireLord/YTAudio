@@ -99,7 +99,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Download"
+        android:text=""
         app:layout_constraintEnd_toEndOf="@+id/tfPath"
         app:layout_constraintStart_toStartOf="@+id/tvWhereYou"
         app:layout_constraintTop_toBottomOf="@+id/tvWhereYou" />
