@@ -64,22 +64,23 @@ class DownloadFragment : Fragment() {
     }
 
 
+    private fun folderPath():String{
+        val youtubeBackupDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ytaudio-download")
+        var youtubeDLDir = ""
+        val userFolderPath = sharedViewModel.folderPathLiveData.value.toString()
+        if (userFolderPath=="null")
+        {
+            youtubeDLDir = youtubeBackupDir.absolutePath
+        }
+        else {
+            youtubeDLDir = userFolderPath
+        }
+        Log.d("path",youtubeDLDir)
+        return youtubeDLDir
+    }
     private fun getVideo(url: String) {
         val request = YoutubeDLRequest(url)
-
-        sharedViewModel.folderPathLiveData.observe(viewLifecycleOwner) { folderPath ->
-            if (folderPath.isNotEmpty()){
-                request.addOption("-o", folderPath + "/%(title)s.%(ext)s")
-            }
-            else {
-                //TODO fix it
-                val youtubeDLDir = File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    "ytaudio-download"
-                )
-                request.addOption("-o", youtubeDLDir.absolutePath + "/%(title)s.%(ext)s")
-            }
-        }
+        request.addOption("-o", folderPath() + "/%(title)s.%(ext)s")
         request.addOption("-x")
         request.addOption("--audio-format", "mp3")
         request.addOption("--audio-quality", "0")
